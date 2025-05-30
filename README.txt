@@ -11,6 +11,15 @@ docker run -d --name mysql \
 
 # Create Table into database 
 
+CREATE DATABASE IF NOT EXISTS thoughts_db;
+
+USE thoughts_db;
+
+CREATE TABLE IF NOT EXISTS thoughts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  thought TEXT NOT NULL,
+  date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 # Use Below Docker Command for Node app
 
