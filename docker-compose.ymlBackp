@@ -1,0 +1,36 @@
+version: '3.4'
+
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: abhi
+      MYSQL_DATABASE: thoughts_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - nodeappnew 
+
+  nodeapp:
+    build: .
+    container_name: node-app
+    ports: 
+      - "80:3000"
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_DATABASE: thoughts_db
+      MYSQL_PASSWORD: abhi
+    depends-on:
+      - mysql
+    networks:
+      - nodeappnew
+volumes:
+  mysql_data:
+
+networks:
+  nodeappnew:
+    driver: bridge
