@@ -48,6 +48,7 @@ jobs:
           image-ref: ${{secrets.DOCKERHUB_USERNAME}}/today-thoughts-note-app:latest
           severity: "HIGH,CRITICAL"
           exit-code: "1"
+          format: table
         env:
           TRIVY_CLEAR_CACHE: "true"
       
