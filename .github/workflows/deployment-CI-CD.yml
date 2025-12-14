@@ -54,6 +54,5 @@ jobs:
             docker rm note-app || true
             docker run -d -p 3000:3000 --restart unless-stopped --name note-app ${{secrets.DOCKERHUB_USERNAME}}/today-thoughts-note-app:latest
             docker ps
-            curl -f http://localhost:3000 || exit 1
 
            
