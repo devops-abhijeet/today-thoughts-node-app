@@ -59,7 +59,11 @@ jobs:
           host: ${{ secrets.AWS_EC2_HOST }}
           username: ${{ secrets.AWS_EC2_USER }}
           key: ${{ secrets.AWS_EC2_SSH_KEY }}
+          Port: 22
           script: | 
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} \
+            | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_REGISTRY }}
+            
             docker pull ${{ secrets.AWS_ECR_REPOSITORY }}:latest
             docker stop note-web || true
             docker rm note-web || true
