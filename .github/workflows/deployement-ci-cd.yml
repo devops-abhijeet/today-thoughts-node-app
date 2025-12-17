@@ -41,7 +41,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
           
       - name: Scanning vulnerabilities
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.20.0
         with:
           image-ref: ${{ secrets.AWS_ECR_REPOSITORY }}:latest
           severity: "HIGH,CRITICAL"
