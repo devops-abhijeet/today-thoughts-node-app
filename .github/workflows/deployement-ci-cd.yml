@@ -25,7 +25,8 @@ jobs:
         
       - name: Build Image on AWS ECR
         run: |
-          docker build -t ${{ secrets.AWS_ECR_REPOSITORY }}:latest --no-cache .
+          docker build --no-cache --file Dockerfile -t ${{ secrets.AWS_ECR_REPOSITORY }}:latest  .
+          
   Trivy-scan-and-push-image:
     runs-on: ubuntu-latest
     needs: login-ECR-and-build-image
