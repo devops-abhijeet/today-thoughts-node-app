@@ -36,6 +36,8 @@ jobs:
           image-ref: ${{ secrets.AWS_ECR_REPOSITORY }}:latest
           severity: HIGH,CRITICAL
           exit-code: 1
+          run: |
+            rm -rf /tmp/trivy-cache
 
       - name: Push to ECR
         run: |
