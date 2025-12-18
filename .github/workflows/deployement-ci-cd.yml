@@ -37,7 +37,7 @@ jobs:
           severity: HIGH,CRITICAL
           exit-code: 1
           env:
-          TRIVY_CLEAR_CACHE: "true"
+        run: rm -rf /tmp/trivy-cache
 
       - name: Push to ECR
         run: |
