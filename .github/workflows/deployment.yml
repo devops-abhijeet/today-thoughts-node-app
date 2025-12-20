@@ -4,15 +4,43 @@ on:
 
   push:
     branches: [ "main" ]
+
 jobs:
-  build:
+
+  Install-and-build:
     runs-on: ubuntu-latest
     steps:
+    
       - uses: actions/checkout@v4  
-      - name: Install & Building Node
+
+      - name: Defining Node version
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Building Application
         run: |
           npm run build
+  
+  Build-image:
+    needs: Install-and-build
+    runs-on: ubuntu-latest
+    steps:
 
+      - uses: actions/checkout@v4
 
+      - name: Login to Docker hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_TOKEN}}
 
+      - name: Building Docker Images
+        run: | 
+          docker build --file Dockerfile . -t ${{secrets.DOCKERHUB_USERNAME}}/note-app:latest
 
+      - name: Push Image to Docker hub
+        run: docker push ${{secrets.DOCKERHUB_USERNAME}}/note-app:latest
