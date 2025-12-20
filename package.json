@@ -6,7 +6,8 @@
     "mysql2": "^3.14.1"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "npm ci"
   },
   "name": "today-thoughts-node-app",
   "version": "1.0.0",
