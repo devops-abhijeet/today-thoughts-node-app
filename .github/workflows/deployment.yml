@@ -75,17 +75,21 @@ jobs:
         run: | 
           docker build --no-cache --file Dockerfile . -t ${{secrets.DOCKERHUB_USERNAME}}/note-app:latest
       
-      - name: Clear Trivy Cache
-        run: rm -rf ~/.cache/trivy
+      # Cache Trivy DB (IMPORTANT)
+      - name: Cache Trivy DB
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/trivy
+          key: trivy-db-${{ runner.os }}
 
       - name: Trivy Image Scan
         uses: aquasecurity/trivy-action@0.24.0
         with:
           image-ref: ${{secrets.DOCKERHUB_USERNAME}}/note-app:latest
           severity: "HIGH,CRITICAL"
-          #ignorefile: .trivyignore
+          ignore-unfixed: true
           format: "table"
-          exit-code: "0"
+          exit-code: "1"
 
       - name: Push Image to Docker hub
         run: docker push ${{secrets.DOCKERHUB_USERNAME}}/note-app:latest
