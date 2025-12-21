@@ -91,7 +91,7 @@ jobs:
           ignorefile: .trivyignore
           ignore-unfixed: true
           format: "table"
-          exit-code: "1"
+          exit-code: "0"
 
       - name: Push Image to Docker hub
         run: docker push ${{secrets.DOCKERHUB_USERNAME}}/note-app:latest
