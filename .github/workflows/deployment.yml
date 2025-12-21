@@ -66,15 +66,12 @@ jobs:
     steps:
 
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: 'npm'
-
-      - name: Install Dependencies (IMPORTANT)
-        run: npm ci
 
       - name: Login to Docker hub
         uses: docker/login-action@v3
@@ -85,15 +82,6 @@ jobs:
       - name: Building Docker Images
         run: | 
           docker build --no-cache --file Dockerfile . -t ${{secrets.DOCKERHUB_USERNAME}}/note-app:latest
-      
-     #  Cache Trivy DB (IMPORTANT)
-     # - name: Cache Trivy DB
-     #   uses: actions/cache@v4
-     #   with:
-     #     path: ~/.cache/trivy
-     #     key: trivy-db-${{ runner.os }}
-     #     restore-keys: |
-     #       trivy-db-
 
       - name: Trivy Image Scan
         uses: aquasecurity/trivy-action@0.24.0
