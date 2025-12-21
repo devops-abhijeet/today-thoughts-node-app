@@ -37,9 +37,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: 'npm'
 
       - name: Install Dependencies (IMPORTANT)
         run: npm ci
+      
+      - name: Cache Trivy DB
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/trivy
+          key: trivy-db-${{ runner.os }}
 
       - name: Trivy FS Scan
         uses: aquasecurity/trivy-action@0.24.0
@@ -47,7 +54,7 @@ jobs:
           scan-type: 'fs'
           scan-ref: '.'
           severity: 'HIGH,CRITICAL'
-          format: "table"
+          format: 'table'
           exit-code: '1'
 
 
