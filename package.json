@@ -1,19 +1,22 @@
 {
-  "dependencies": {
-    "body-parser": "^2.2.0",
-    "express": "^5.1.0",
-    "glob": "^10.5.0",
-    "mysql2": "^3.14.1"
-  },
+  "name": "today-thoughts-node-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "db.js",
   "scripts": {
     "start": "node server.js",
     "build": "npm ci"
   },
-  "name": "today-thoughts-node-app",
-  "version": "1.0.0",
-  "main": "db.js",
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.1"
+  },
+  "overrides": {
+    "cross-spawn": "7.0.5",
+    "glob": "10.5.0"
+  }
 }
