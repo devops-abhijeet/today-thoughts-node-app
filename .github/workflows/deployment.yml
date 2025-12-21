@@ -76,9 +76,9 @@ jobs:
         with:
           image-ref: ${{secrets.DOCKERHUB_USERNAME}}/note-app:latest
           severity: "HIGH,CRITICAL"
-          ignorefile: .trivyignore
+          #ignorefile: .trivyignore
           format: "table"
-          exit-code: "0"
+          exit-code: "1"
 
       - name: Push Image to Docker hub
         run: docker push ${{secrets.DOCKERHUB_USERNAME}}/note-app:latest
