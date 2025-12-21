@@ -1,12 +1,18 @@
-FROM node:23.11.1-alpine
+FROM node:18-alpine
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+# Copy only package files first
+COPY package*.json ./
 
-RUN npm install ci --omit=dev
+# Install only production dependencies
+RUN npm ci --omit=dev
 
+# Copy source code
 COPY . .
+
+# Clean npm cache (optional)
+RUN npm cache clean --force
 
 EXPOSE 3000
 
