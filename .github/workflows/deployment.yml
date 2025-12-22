@@ -116,4 +116,12 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }} 
           script: |
-            docker ps
+            docker stop note-app || true
+            docker rm note-app || true
+
+            docker pull ${{secrets.DOCKERHUB_USERNAME}}/note-app:latest
+            docker run -d \
+              --name note-app \
+              --restart always \
+              -p 4000:3000 \
+              ${{ secrets.DOCKERHUB_USERNAME }}/note-app:latest
