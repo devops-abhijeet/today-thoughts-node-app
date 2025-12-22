@@ -112,17 +112,6 @@ jobs:
     steps:
 
       - uses: actions/checkout@v4
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Login To ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
         
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1  
@@ -133,6 +122,10 @@ jobs:
           script: |
            docker stop note-app || true
            docker rm note-app || true
+
+           aws ecr get-login-password --region ap-south-1 | \
+           docker login --username AWS --password-stdin \
+           ${{ secrets.AWS_ECR_REPO }}
 
            docker pull ${{ secrets.AWS_ECR_REPO }}/${{ secrets.AWS_ECR_REPO_NAME }}:latest
 
