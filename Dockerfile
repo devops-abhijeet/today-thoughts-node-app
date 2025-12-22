@@ -11,9 +11,6 @@ RUN npm ci --omit=dev
 # Copy source code
 COPY . .
 
-# Clean npm cache (optional)
-RUN npm cache clean --force
-
 EXPOSE 3000
 
 CMD ["node", "server.js"]
