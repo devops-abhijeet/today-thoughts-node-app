@@ -1,0 +1,73 @@
+name: CI/CD Pipeline deploy on EC2
+on: 
+  push: 
+    branches: [main]
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate repository
+        uses: actions/checkout@v4
+  Build-and-push:
+    runs-on: ubuntu-latest
+    needs: Test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Docker Login
+        uses: docker/login-action@v3
+        with:
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_TOKEN}}
+      - name: Build Docker Image
+        run: |
+          docker build --no-cache --file Dockerfile --tag ${{secrets.DOCKERHUB_USERNAME}}/today-thoughts-note-app:latest .
+      - name: Push Image to Docker Hub
+        run: |
+          docker push ${{secrets.DOCKERHUB_USERNAME}}/today-thoughts-note-app:latest
+
+  trivy-scan:
+    runs-on: ubuntu-latest
+    needs: Build-and-push
+    steps:
+      - name: Docker Login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Pull image from Docker Hub
+        run: |
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/today-thoughts-note-app:latest
+
+      - name: Verify image exists
+        run: docker images
+      
+      - name: Scanning Docker Image - vulnerabilities
+        uses: aquasecurity/trivy-action@0.20.0
+        with:
+          image-ref: ${{secrets.DOCKERHUB_USERNAME}}/today-thoughts-note-app:latest
+          severity: "HIGH,CRITICAL"
+          exit-code: "1"
+          format: table
+        env:
+          TRIVY_CLEAR_CACHE: "true"
+      
+  Deploy:
+    runs-on: ubuntu-latest
+    needs: trivy-scan
+    steps:
+      - name: deploying on EC2 (AWS) via SSH
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{secrets.EC2_HOST}}
+          username: ${{secrets.EC2_USER}}
+          key: ${{secrets.EC2_SSH_KEY}}
+          script: |
+            docker image prune -af
+            docker pull ${{secrets.DOCKERHUB_USERNAME}}/today-thoughts-note-app:latest
+            docker stop note-app || true
+            docker rm note-app || true
+            docker run -d -p 3000:3000 --restart unless-stopped --name note-app ${{secrets.DOCKERHUB_USERNAME}}/today-thoughts-note-app:latest
+            docker ps
+
+           
