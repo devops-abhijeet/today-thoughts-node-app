@@ -1,13 +1,16 @@
-name: Integration Node Note App - CI
+name: Note App - CI / CD
 
 on: 
 
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
 
-  Install-and-build:
+  build:
+    name: Build Application
     runs-on: ubuntu-latest
     steps:
     
@@ -26,8 +29,9 @@ jobs:
         run: |
           npm run build
   
-  Trivy-fs-scan:
-    needs: Install-and-build
+  security-scan:
+    name: Security Scan (Trivy)
+    needs: build
     runs-on: ubuntu-latest
     steps:
 
@@ -60,12 +64,10 @@ jobs:
           exit-code: '1'
 
 
-  Build-and-push-image:
-    needs: Trivy-fs-scan
+  docker-build-push-ecr:
+    needs: security-scan
     runs-on: ubuntu-latest
     steps:
-
-      - uses: actions/checkout@v4
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -97,8 +99,9 @@ jobs:
           docker push \
           ${{ secrets.AWS_ECR_REPO }}/${{ secrets.AWS_ECR_REPO_NAME }}:${{ github.sha }}
 
-  deploy:
-    needs: Build-and-push-image
+  deploy-ec2:
+    name: Deploy to EC2
+    needs: docker-build-push-ecr
     runs-on: ubuntu-latest
     steps:
 
